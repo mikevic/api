@@ -8,14 +8,16 @@ from celery import shared_task
 from api.store.download import DownloadStore
 from api.utils.constants import ME_DATA_DOWNLOAD_TEMP_ID
 from database.models import UserProfile
+import datetime
 
 
 def generate_csv_and_email(data, download_type, community_name=None, email=None):
     response = HttpResponse(content_type="text/csv")
+    now = datetime.datetime.now().strftime("%Y%m%d")
     if not community_name:
-        filename = "all-%s-data.csv" % download_type
+        filename = "all-%s-data-%s.csv" % (download_type, now)
     else:
-        filename = "%s-%s-data.csv" % (community_name, download_type)
+        filename = "%s-%s-data-%s.csv" % (community_name, download_type, now)
     writer = csv.writer(response)
     for row in data:
         writer.writerow(row)
